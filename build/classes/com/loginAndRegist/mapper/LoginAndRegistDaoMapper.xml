@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loginAndRegist.dao.LoginAndRegistDao">
+	<resultMap type="entity.User" id="user_map">
+		<id property="id" column="ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="userName" jdbcType="VARCHAR" column="USER_NAME" />
+		<result property="roleId" column="ROLD_ID" />
+		<result property="sex" jdbcType="VARCHAR" column="SEX" />
+		<result property="loginKey" jdbcType="VARCHAR" column="LOGIN_KEY" />
+		<result property="password" jdbcType="VARCHAR" column="PASSWORD" />
+		<result property="phone" jdbcType="VARCHAR" column="PHONE" />
+		<result property="adress" jdbcType="VARCHAR" column="ADRESS" />
+		<result property="univercity" jdbcType="VARCHAR" column="UNIVERCITY" />
+		<result property="experience" jdbcType="VARCHAR" column="EXPERIENCE" />
+		<result property="delFlag" column="DEL_FLAG" />
+	</resultMap>
+	<select id="judgePassword" parameterType="map" resultType="int">
+		select count(*) from wys_user s where s.login_key=#{loginKey,jdbcType=VARCHAR} and s.password=#{password,jdbcType=VARCHAR}
+	</select>
+	<select id="judgeUserRole" parameterType="map" resultMap="user_map">
+		select * from wys_user s where s.login_key=#{loginKey,jdbcType=VARCHAR} and s.password=#{password,jdbcType=VARCHAR}
+	</select>
+	<insert id="addUser" parameterType="entity.User">
+	<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select wys_seq.nextval from dual
+	</selectKey>
+		insert into wys_user
+  (id,user_name,sex,login_key,password,phone,adress)
+values
+  (#{id},#{userName,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR},#{loginKey,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{adress,jdbcType=VARCHAR})	
+	</insert>
+	<update id="changePassword" parameterType="map" >
+	update wys_user set password =#{newPassword,jdbcType=VARCHAR} where login_key =#{loginKey,jdbcType=VARCHAR}
+	</update>
+	<select id="findUserByKey" parameterType="map" resultMap="user_map">
+		select * from wys_user s where s.login_key=#{loginKey,jdbcType=VARCHAR} and s.password=#{password,jdbcType=VARCHAR}
+	</select>
+	<select id="findAllDoctor" resultMap="user_map">
+	select * from wys_user a  where a.rold_id=0
+	</select>
+	<select id="findAllDoctorByName" resultMap="user_map">
+	select * from wys_user a  where a.rold_id=0 and a.user_name like '%${doctorName}%'
+	
+	</select>
+</mapper>

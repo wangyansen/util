@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evaluate.dao.EvaluateDao">
+	<resultMap type="entity.Evaluate" id="evaluate_map">
+		<id property="id" column="ID" />
+		<result property="sickId" column="SICK_ID" />
+		<result property="doctorId" column="DOCTOR_ID" />
+		<result property="evaluateDetails"  column="EVALUATE_DETAILS" />
+		<result property="evaluateTime" column="EVALUATE_TIME" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<association property="user" resultMap="user_map"></association>
+	</resultMap>
+	
+	<resultMap type="entity.User" id="user_map">
+		<id property="id" column="id"/>
+		<result property="userName" jdbcType="VARCHAR" column="USER_NAME" />
+		<result property="sex" jdbcType="VARCHAR" column="SEX" />
+		<result property="phone" jdbcType="VARCHAR" column="PHONE" />
+	</resultMap>
+	
+	<resultMap type="entity.ReplyEvaluate" id="replyEvaluate_map">
+		<id property="id" column="ID" />
+		<result property="sickerId" column="SICKERID" />
+		<result property="doctorId" column="DOCTORID" />
+		<result property="content" column="CONTENT" />
+		<result property="time" column="TIME" />
+		<result property="statu" column="STATU" />
+		<result property="eid" column="eid"/>
+	<association property="user" resultMap="user_map"></association>
+	</resultMap>
+	<select id="findAllEvaluateByDoctorId" parameterType="int" resultMap="evaluate_map" >
+	select c.id userid,c.sex,c.user_name,c.phone,a.id, a.sick_id, a.doctor_id, a.evaluate_details, a.evaluate_time, a.del_flag from wys_evaluate a
+	left join wys_user b on b.id=a.doctor_id left join wys_user c on c.id=a.sick_id where  a.doctor_id=#{doctorId}
+	</select>
+	<insert id="replyEvaluate" parameterType="entity.ReplyEvaluate">
+	 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select wys_seq.nextval from dual
+	</selectKey>
+	insert into wys_reply_evaluate
+  (id, sickerid, doctorid, content, time,eid)
+values
+  (#{id},#{sickerId},#{doctorId},#{content},#{time},#{eid})
+	</insert>
+	<update id="updateStatus" parameterType="int">
+	update wys_evaluate set del_flag = 0 where id =#{id}
+	</update>
+	<select id="findAllEvaluateBySickerId" parameterType="int" resultMap="evaluate_map">
+	select b.id userid,b.sex,b.user_name,b.phone,a.id, a.sick_id, a.doctor_id, a.evaluate_details, a.evaluate_time, a.del_flag from wys_evaluate a
+	left join wys_user b on b.id=a.doctor_id left join wys_user c on c.id=a.sick_id where  a.sick_id=#{sickId}
+	</select>
+	<select id="seeReplyEvaluate" parameterType="int" resultMap="replyEvaluate_map">
+select c.user_name,a.id, a.sickerid, a.doctorid, a.content, a.time, a.statu, a.eid from wys_reply_evaluate a left join wys_evaluate b on a.eid=b.id left join wys_user c on a.doctorid=c.id where b.id=#{eid}
+	</select>
+	<insert id="insertEvaluate" parameterType="entity.Evaluate">
+	 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select wys_seq.nextval from dual
+	</selectKey>
+	insert into wys_evaluate
+  (id, sick_id, doctor_id, evaluate_details, evaluate_time)
+values
+  (#{id},#{sickId},#{doctorId},#{evaluateDetails},#{evaluateTime})
+	</insert>
+	<select id="cusSeeDoctorEvaluate" parameterType="int" resultMap="evaluate_map">
+select a.id,b.user_name, a.sick_id, a.doctor_id, a.evaluate_details, a.evaluate_time from wys_evaluate a left join wys_user b on a.sick_id=b.id where a.doctor_id=#{doctorId}
+	</select>
+	
+</mapper>

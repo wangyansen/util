@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.drug.dao.DrugDao">
+	<resultMap type="entity.Drug" id="drug_map">
+		<id property="id" column="ID" />
+		<result property="drugId" column="DRUG_ID" />
+		<result property="drugName" column="DRUG_NAME" />
+		<result property="drugCompany"  column="DRUG_COMPANY" />
+		<result property="drugPrice" column="DRUG_PRICE" />
+		<result property="drugAmount" column="DRUG_AMOUNT" />
+		<result property="drugExp"  column="DRUG_EXP" />
+		<result property="drugRemark"  column="DRUG_REMARK" />
+		<result property="delFlag" column="DEL_FLAG" />
+	</resultMap>
+	<select id="findAllDrug" resultMap="drug_map">
+	select * from wys_drug where del_flag=1
+	</select>
+</mapper>
+

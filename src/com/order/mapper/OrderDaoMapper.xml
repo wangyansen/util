@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.order.dao.OrderDao">
+	<resultMap type="entity.Order" id="order_map">
+		<id property="id" column="ID" />
+		<result property="orderId" column="ORDER_ID" />
+		<result property="sickId" column="SICK_ID" />
+		<result property="doctorId"  column="DOCTOR_ID" />
+		<result property="orderTime" column="ORDER_TIME" />
+		<result property="orderStatus"  column="ORDER_STATUS" />
+		<result property="openTime"  column="OPEN_TIME" />
+		<result property="remark" column="REMARK" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<association property="user" resultMap="user_map"></association>
+	</resultMap>
+	
+	 <resultMap type="entity.User" id="user_map">
+		<id property="id" column="id"/>
+		<result property="userName" jdbcType="VARCHAR" column="USER_NAME" />
+		<result property="sex" jdbcType="VARCHAR" column="SEX" />
+		<result property="phone" jdbcType="VARCHAR" column="PHONE" />
+	</resultMap>
+	
+	<select id="findAllOrderByDoctorId" parameterType="int" resultMap="order_map">
+	 select a.id, a.order_id, a.sick_id,b.user_name,b.sex,b.phone, a.doctor_id, a.order_time, a.order_status, a.del_flag, a.remark from wys_order a left join wys_user b
+ on a.sick_id=b.id where a.doctor_id=#{doctorId} and a.order_status=0 and a.del_flag=1
+	</select>
+	<update id="agreeOrder" parameterType="entity.Order">
+	update wys_order a set a.order_status=1 where a.id=#{id}
+	</update>
+	<select id="findAllOldOrderByDoctorId" parameterType="int" resultMap="order_map">
+	select a.id, a.order_id, a.sick_id,b.user_name,b.sex,b.phone, a.doctor_id, a.order_time, a.order_status, a.del_flag, a.remark from wys_order a left join wys_user b
+ on a.sick_id=b.id where a.doctor_id=#{doctorId} and a.order_status=1 and a.del_flag=1
+	</select>
+	<update id="deleteThisOrder" parameterType="entity.Order">
+	update wys_order a set a.del_flag=0 where a.id=#{id}
+	</update>
+	<select id="findNewOrderBySickerName" resultMap="order_map">
+	select a.id, a.order_id, a.sick_id,b.user_name,b.sex,b.phone, a.doctor_id, a.order_time, a.order_status, a.del_flag, a.remark from wys_order a left join wys_user b
+ on a.sick_id=b.id where a.doctor_id=#{doctorId} and a.order_status=0 and a.del_flag=1 and b.user_name like '%${sickerName}%'
+	</select>
+		<select id="findOldOrderBySickerName"  resultMap="order_map">
+	select a.id, a.order_id, a.sick_id,b.user_name,b.sex,b.phone, a.doctor_id, a.order_time, a.order_status, a.del_flag, a.remark from wys_order a left join wys_user b
+ on a.sick_id=b.id where a.doctor_id=#{doctorId} and a.order_status=1 and a.del_flag=1 and b.user_name like '%${sickerName}%'
+	</select>
+	<select id="findAllOrderBySickerId" parameterType="int" resultMap="order_map">
+	 select a.id, a.order_id, a.sick_id,b.user_name,b.sex,b.phone, a.doctor_id, a.order_time, a.order_status, a.del_flag, a.remark from wys_order a left join wys_user b
+ on a.doctor_id=b.id where a.sick_id=#{sickerId} and a.del_flag=1
+	</select>
+		<select id="findOrderByDoctorName"  resultMap="order_map">
+	select a.id, a.order_id, a.sick_id,b.user_name,b.sex,b.phone, a.doctor_id, a.order_time, a.order_status, a.del_flag, a.remark from wys_order a left join wys_user b
+ on a.doctor_id=b.id where a.sick_id=#{sickerId} and a.del_flag=1 and b.user_name like '%${doctorName}%'
+	</select>
+	<insert id="addOrder" parameterType="entity.Order">
+	 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select wys_seq.nextval from dual
+	</selectKey>
+	insert into wys_order (id, sick_id, doctor_id, order_time, remark) values(#{id},#{sickId},#{doctorId},#{orderTime},#{remark})
+	</insert>
+	<select id="findOrderById" parameterType="int" resultMap="order_map">
+	select * from wys_order where id=#{id}
+	</select>
+	<update id="updateOrder" parameterType="entity.Order">
+	update wys_order set sick_id =#{sickId},doctor_id =#{doctorId},order_time =#{orderTime},remark =#{remark} where id =#{id}
+	</update>
+</mapper>

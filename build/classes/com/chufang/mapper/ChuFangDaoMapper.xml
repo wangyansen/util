@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chufang.dao.ChuFangDao">
+	<resultMap type="entity.ChuFang" id="chufang_map">
+		<id property="id" column="ID" />
+		<result property="chuFangId" column="CHUFANG_ID" />
+		<result property="sickName" column="SICK_NAME" />
+		<result property="doctorName"  column="DOCTOR_NAME" />
+		<result property="sickerName" column="SICKER_NAME" />
+		<result property="drugId" column="DRUG_ID" />
+		<result property="medicalApplianceId"  column="MEDICAL_APPLIANCE_ID" />
+		<result property="openTime"  column="OPEN_TIME" />
+		<result property="price" column="PRICE" />
+		<result property="remark" column="REMARK" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<result property="doctorId" column="DOCTOR_ID"/>
+		<association property="drug" resultMap="drug_map"></association>
+		<association property="medicalAppliance" resultMap="med_map"></association>
+		
+	</resultMap>
+	
+	 <resultMap type="entity.Drug" id="drug_map">
+		<id property="id" column="id"/>
+		<result property="drugName" column="DRUG_NAME"/>
+	</resultMap>
+	
+	<resultMap type="entity.MedicalAppliance" id="med_map">
+		<id property="id" column="id"/>
+		<result property="medicalApplianceName" column="MEDICAL_APPLIANCE_NAME"/>
+	</resultMap>
+	 
+	<insert id="addChuFang" parameterType="entity.ChuFang">
+	 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select wys_seq.nextval from dual
+	</selectKey>
+	insert into wys_chufang
+  (id, doctor_name, sicker_name, drug_id, medical_appliance_id, open_time, price, remark, sick_name,DOCTOR_ID)
+values
+  (#{id}, #{doctorName},#{sickerName},#{drugId},#{medicalApplianceId},#{openTime},#{price},#{remark},#{sickName},#{doctorId})
+	</insert>
+	<select id="findAllChuFangList" parameterType="int" resultMap="chufang_map">
+	select c.id,d.DRUG_NAME,m.MEDICAL_APPLIANCE_NAME, c.chufang_id, c.doctor_name, c.sicker_name, c.drug_id,c.medical_appliance_id, c.open_time, c.price, c.remark,c.del_flag, c.sick_name, c.doctor_id  from wys_chufang c left join  wys_drug d on d.id=c.drug_id left join WYS_MEDICAL_APPLIANCE m on m.id=c.medical_appliance_id where c.doctor_id=#{userId} and c.del_flag=1 order by c.id desc
+	</select>
+	<select id="findChuFangById" resultMap="chufang_map">
+	select * from wys_chufang a where a.id=#{id}
+	</select>
+	<update id="updateChufang" parameterType="entity.ChuFang">
+		update wys_chufang set doctor_name = #{doctorName},sicker_name = #{sickerName},drug_id = #{drugId},medical_appliance_id =#{medicalApplianceId},open_time =#{openTime},price = #{price},remark = #{remark},sick_name =#{sickName} where id =#{id}
+	</update>
+	<update id="deleteChufang" parameterType="entity.ChuFang">
+	update wys_chufang set del_flag=0 where id=#{id}
+	</update>
+	<select id="findChufangListBySickerName" resultMap="chufang_map">
+		select * from wys_chufang c where c.doctor_id=#{doctorId} and c.sicker_name like '%${sickerName}%' and c.del_flag=1
+	</select>
+	<select id="cusFindChufangList"  resultMap="chufang_map">
+		select c.id,d.DRUG_NAME,m.MEDICAL_APPLIANCE_NAME, c.chufang_id, c.doctor_name, c.sicker_name, c.drug_id,c.medical_appliance_id, c.open_time, c.price, c.remark,c.del_flag, c.sick_name, c.doctor_id  from wys_chufang c left join  wys_drug d on d.id=c.drug_id left join WYS_MEDICAL_APPLIANCE m on m.id=c.medical_appliance_id where c.sicker_name like '%${sickerName}%' and c.del_flag=1 order by c.id desc
+	</select>
+	
+</mapper>

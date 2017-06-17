@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medicalAppliance.dao.MedicalApplianceDao">
+	<resultMap type="entity.MedicalAppliance" id="medicalAppliance_map">
+		<id property="id" column="ID" />
+		<result property="medicalApplianceId" column="MEDICAL_APPLIANCE_ID" />
+		<result property="medicalApplianceName" column="MEDICAL_APPLIANCE_NAME" />
+		<result property="medicalAppliancePrice"  column="MEDICAL_APPLIANCE_PRICE" />
+		<result property="medicalApplianceAmount" column="MEDICAL_APPLIANCE_AMOUNT" />
+		<result property="medicalApplianceCompany" column="MEDICAL_APPLIANCE_COMPANY" />
+		<result property="medicalApplianceExp"  column="MEDICAL_APPLIANCE_EXP" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<result property="more"  column="MORE" />
+	</resultMap>
+	<select id="findAllMedicalAppliance" resultMap="medicalAppliance_map">
+	select* from wys_medical_appliance where del_flag=1
+	</select>
+</mapper>
