@@ -24,7 +24,7 @@ import entity.Drug;
 import entity.MedicalAppliance;
 
 /**
- * @ClassName：类名
+ * @ClassName：类名test
  * @Description:类的功能描述
  * @Author:作者
  * @Since: 作成日期
